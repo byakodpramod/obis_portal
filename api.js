@@ -20,24 +20,36 @@ $(function() {
                     return ""
                 } 
     });
-    load_example_task();
-    //$('#reset_password').click(function(){$('#pass_form').toggle(!$('#pass_form').is(':visible'));});
-    //$('#user_form').submit(function(){var formData = JSON.parse($("#user_form").serializeArray());console.log(formData);return false;})
+    //OBIS Search
+    $('#myTab').hide();
+    load_main_page();
 });//End of Document Ready
 
-function load_example_task(){
-    addtask_template = Handlebars.templates['tmpl-add-form']
+function load_main_page(){
+    template = Handlebars.templates['tmpl-main']
     $('#home').empty()
-    $('#home').append(addtask_template({"x":0,"y":0}))
+    $('#home').append(template({}))
+    $('#submitSearch').click(function(){run_search()});
+    $("#search").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#submitSearch").click();
+        }
+    });
+}
+function run_search(){
+    tr_template = Handlebars.templates['tmpl-result-tr']
+    search_term = $('#search').val();
+    search_url= '/api/obis/searchview/?search=' + search_term + '&format=json';
+    $.getJSON(search_url,function(data){
+            $('#tablebody').empty();
+        $.each(data.results,function(idx,item){
+            console.log(item);
+            $('#tablebody').append(tr_template(item));    
+        });
 
-    $('#addTask').click(function(){run_example_task();})
+    });
 }
-function run_example_task(){
-    add_url = "/api/queue/run/cybercomq.tasks.tasks.add/.json"
-    task_name = "cybercomq.tasks.tasks.add"
-    form_data=$('#addTaskForm').serializeObject()
-    cybercom_submit_task(add_url,task_name,[parseInt(form_data.x),parseInt(form_data.y)],{},"task_result")
-}
+//**************Default activity*****************************************************
 function submit_user(){
     console.log(user_url)
     $.post( user_url,$('#user_form').serializeObject(),function(data){
