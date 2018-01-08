@@ -39,7 +39,7 @@ function load_main_page(){
 function run_search(){
     tr_template = Handlebars.templates['tmpl-result-tr']
     search_term = $('#search').val();
-    search_url= '/api/obis/searchview/?search=' + search_term + '&format=json';
+    search_url= '/api/obis/vwsearchmv/?search=' + search_term + '&format=json';
     $.getJSON(search_url,function(data){
             $('#tablebody').empty();
         $.each(data.results,function(idx,item){
